@@ -1,4 +1,4 @@
-import {Meta} from "../_shared/Meta";
+import {Meta} from "./Meta";
 
 export interface BricklinkItemResponse {
     meta: Meta;

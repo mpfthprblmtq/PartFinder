@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Part } from "../../components/PartFinder/Part";
+import { Part } from "../../model/part/Part";
 
 export interface PartFinderState {
   parts: Part[];

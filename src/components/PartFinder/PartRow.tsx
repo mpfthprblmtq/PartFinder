@@ -1,12 +1,11 @@
 import React, { FC, memo, useState } from "react";
-import { Part } from "./Part";
-import { Box, Button, CircularProgress, Tooltip, Typography } from "@mui/material";
-import { colorMap } from "./ColorMap";
+import { Part } from "../../model/part/Part";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import { colorMap } from "../../utils/ColorMap";
 import { subtract } from "lodash";
 import { Add, Remove } from "@mui/icons-material";
 import InformationDialog from "../_shared/InformationDialog/InformationDialog";
 import { useBrickLinkService } from "../../hooks/useBrickLinkService";
-import { Type } from "../../model/_shared/Type";
 import { useDispatch } from "react-redux";
 import { updatePartCount } from "../../redux/slices/partFinderSlice";
 
@@ -17,33 +16,32 @@ interface PartRowParams {
 const PartRow: FC<PartRowParams> = ({part}) => {
 
   const [moreInformationDialogOpen, setMoreInformationDialogOpen] = useState<boolean>(false);
-  const [name, setName] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const { getBricklinkData } = useBrickLinkService();
 
   const dispatch = useDispatch();
 
   const openMoreInformationDialog = async () => {
-    setLoading(true);
-    await getBricklinkData(part.id, Type.PART).then(result => {
-      setName(result.name);
-      setLoading(false);
-    });
+    if (!part.name) {
+      setLoading(true);
+      await getBricklinkData(part).then(result => {
+        part.name = result.name;
+        setLoading(false);
+      });
+    }
     setMoreInformationDialogOpen(true);
   }
 
   return (
     <div>
-      <Box sx={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
-        <Box sx={{position: 'relative', m: 1}}>
-          <Tooltip title={colorMap.get(part.colorId)}>
-            {loading ? <CircularProgress size={50} /> : <img src={part.imageUrl} height={50} alt={'part-img'} onClick={openMoreInformationDialog}/>}
-          </Tooltip>
+      <Box sx={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
+        <Box sx={{position: 'relative', m: 1, minWidth: '80px', maxHeight: '50px', textAlign: 'center'}}>
+          {loading ? <CircularProgress size={50} /> : <img src={part.imageUrl} height={50} alt={'part-img'} onClick={openMoreInformationDialog}/>}
         </Box>
         <Box sx={{position: 'relative', m: 1, textAlign: 'center'}}>
           <Typography><a href={`https://www.bricklink.com/v2/catalog/catalogitem.page?P=${part.id}&idColor=${part.colorId}`}
                          target={'_blank'} rel="noreferrer">{part.id}</a></Typography>
-          <Typography>{colorMap.get(part.colorId)}</Typography>
+          <Typography sx={{fontSize: '14px'}}>{colorMap.get(part.colorId)}</Typography>
         </Box>
         <Box sx={{position: 'relative', m: 1}}>
           <Box sx={{display: 'flex', alignItems: 'center'}}>
@@ -79,7 +77,7 @@ const PartRow: FC<PartRowParams> = ({part}) => {
             <tbody>
             <tr>
               <td><strong>Name:</strong></td>
-              <td>{name}</td>
+              <td>{part.name}</td>
             </tr>
             <tr>
               <td><strong>Color:</strong></td>

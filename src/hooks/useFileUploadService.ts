@@ -1,4 +1,4 @@
-import { Part } from "../components/PartFinder/Part";
+import { Part } from "../model/part/Part";
 import { useState } from "react";
 import xml2js from "xml2js";
 

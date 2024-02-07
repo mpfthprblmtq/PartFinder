@@ -8,7 +8,7 @@ import {
   Toolbar, Typography
 } from "@mui/material";
 import CodeIcon from '@mui/icons-material/Code';
-import { colorMap } from "./ColorMap";
+import { colorMap } from "../../utils/ColorMap";
 import PartRow from "./PartRow";
 import { useDispatch, useSelector } from "react-redux";
 import { addPartsToStore, removeAllPartsFromStore } from "../../redux/slices/partFinderSlice";
@@ -20,7 +20,7 @@ import SetFilterDialog from "./Dialog/SetFilterDialog";
 import { usePartFinderService } from "../../hooks/dynamo/usePartFinderService";
 import QRCode from "react-qr-code";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Part } from "./Part";
+import { Part } from "../../model/part/Part";
 import Version from "../_shared/Version/Version";
 
 const PartFinder: FunctionComponent = () => {

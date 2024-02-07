@@ -1,4 +1,4 @@
-import { Part } from "../../components/PartFinder/Part";
+import { Part } from "../../model/part/Part";
 import { db, PartsFinderTable } from "../../db.config";
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from "dayjs";

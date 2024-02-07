@@ -1,15 +1,14 @@
 import axios, { AxiosError, HttpStatusCode } from "axios";
 import { getAuthHeader } from "../utils/Oauth1Helper";
-import { BricklinkItemResponse } from "../model/item/BricklinkItemResponse";
-import { Item } from "../model/item/Item";
-import { Type } from "../model/_shared/Type";
+import { BricklinkItemResponse } from "../model/bricklink/BricklinkItemResponse";
 import { htmlDecode } from "../utils/StringUtils";
+import {Part} from "../model/part/Part";
 
 const corsProxyUrl: string = "https://proxy.cors.sh/";
 const baseUrl: string = "https://api.bricklink.com/api/store/v1";
 
 export interface BrickLinkHooks {
-  getBricklinkData: (id: string, type: Type) => Promise<Item>;
+  getBricklinkData: (part: Part) => Promise<Part>;
 }
 
 export const useBrickLinkService = (): BrickLinkHooks => {
@@ -39,28 +38,18 @@ export const useBrickLinkService = (): BrickLinkHooks => {
   };
 
   /**
-   * Get function that retrieves basic set information (name, year released, etc)
-   * @param id the id of the set
-   * @param type the type of item to get
+   * Get function that retrieves basic part information
+   * @param part the part to search
    */
-  const getBricklinkData = async (id: string, type: Type): Promise<Item> => {
-    // append a '-1' onto the end of the id, since that's how BrickLink stores their data
-    if (type === Type.SET && !id.match(".*-\\d+")) {
-      id += "-1";
-    }
-
+  const getBricklinkData = async (part: Part): Promise<Part> => {
     try {
       const bricklinkData: BricklinkItemResponse =
-        await get<BricklinkItemResponse>(`${baseUrl}/items/${type}/${id}`);
-      const item = bricklinkData.data;
+        await get<BricklinkItemResponse>(`${baseUrl}/items/PART/${part.id}`);
+      const partResponse = bricklinkData.data;
       return {
-        setId: item.no,
-        name: htmlDecode(item.name),
-        type: item.type,
-        imageUrl: item.image_url,
-        thumbnailUrl: item.thumbnail_url,
-        yearReleased: item.year_released,
-      } as Item;
+        ...part,
+        name: htmlDecode(partResponse.name)
+      } as Part;
     } catch (error: AxiosError | any) {
       if (error.code === AxiosError.ECONNABORTED && error.message.startsWith("timeout")) {
         throw new AxiosError("Error with BrickLink, request timed out!", AxiosError.ECONNABORTED);
