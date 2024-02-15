@@ -5,6 +5,8 @@ import xml2js from "xml2js";
 export const useFileUploadService = () => {
 
   const [error, setError] = useState<string | null>(null);
+  const [results, setResults] =
+    useState<{files: number, lots: number, parts: number}>();
 
   const handleFileUpload = async (files: FileList):Promise<Part[]> => {
     if (!files || files.length === 0) {
@@ -14,10 +16,13 @@ export const useFileUploadService = () => {
 
     try {
       const parsedParts: Part[] = [];
+      let lots: number = 0;
+      let parts: number = 0;
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const reader = new FileReader();
 
+        // eslint-disable-next-line no-loop-func
         const partsData: Promise<Part[]> = new Promise((resolve, reject) => {
           reader.onload = async (event) => {
             const xmlContent = event.target?.result;
@@ -31,7 +36,7 @@ export const useFileUploadService = () => {
                   partsChunk.push(...result.INVENTORY.ITEM
                     .filter((xmlItem: any) => xmlItem.MINQTY !== xmlItem.QTYFILLED)
                     .map((xmlItem: any) => {
-                      return {
+                      const part = {
                         id: xmlItem.ITEMID,
                         colorId: xmlItem.COLOR,
                         quantityNeeded: +xmlItem.MINQTY,
@@ -39,6 +44,9 @@ export const useFileUploadService = () => {
                         imageUrl: `https://img.bricklink.com/ItemImage/PN/${xmlItem.COLOR}/${xmlItem.ITEMID}.png`,
                         set: file.name.replace('.xml', '')
                       } as Part;
+                      lots++;
+                      parts = parts + (part.quantityNeeded - part.quantityHave);
+                      return part;
                     }));
                   resolve(partsChunk);
                 }
@@ -49,6 +57,7 @@ export const useFileUploadService = () => {
         });
         parsedParts.push(...await partsData);
       }
+      setResults({files: files.length, lots: lots, parts: parts});
       return parsedParts;
     } catch (err) {
       setError('Failed to read files!');
@@ -56,5 +65,5 @@ export const useFileUploadService = () => {
     }
   }
 
-  return { error, handleFileUpload };
+  return { error, results, handleFileUpload };
 };
