@@ -1,6 +1,6 @@
 import {FC, memo, useEffect, useState} from "react";
 import {removeAllPartsFromStore} from "../../../redux/slices/partFinderSlice";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {colorMap} from "../../../utils/ColorMap";
 import {Part} from "../../../model/part/Part";
@@ -28,6 +28,9 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const partsCleared: number = useSelector((state: any) => state.partFinderStore.partsCleared);
+  const lotsCleared: number = useSelector((state: any) => state.partFinderStore.lotsCleared);
 
   // sets up the color list and the set list we use to filter
   useEffect(() => {
@@ -120,6 +123,7 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
             />
           }
           label={'Show Completed Parts'}/>
+        <Typography>{`${partsCleared} ${partsCleared === 1 ? 'part' : 'parts'} found, ${lotsCleared} ${lotsCleared === 1 ? 'lot' : 'lots'} cleared!`}</Typography>
         {parts.filter(part => {
           if (showCompletedParts) {
             return (colorFilterId ? part.colorId === colorFilterId : true) && (setFilter ? part.set === setFilter : true);
