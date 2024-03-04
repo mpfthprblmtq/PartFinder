@@ -27,9 +27,9 @@ const PartRow: FC<PartRowParams> = ({part}) => {
       await getBricklinkData(part).then(result => {
         part.name = result.name;
         setLoading(false);
-        setMoreInformationDialogOpen(true);
       });
     }
+    setMoreInformationDialogOpen(true);
   }
 
   return (
