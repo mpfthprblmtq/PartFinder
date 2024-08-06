@@ -1,15 +1,39 @@
-import {FC, memo, useEffect, useState} from "react";
+import React, {FC, memo, useEffect, useState} from "react";
 import {removeAllPartsFromStore} from "../../../redux/slices/partFinderSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {colorMap} from "../../../utils/ColorMap";
 import {Part} from "../../../model/part/Part";
-import TooltipConfirmationModal from "../../_shared/TooltipConfirmationModal/TooltipConfirmationModal";
 import PartRow from "../PartRow";
-import {AppBar, Box, Button, Checkbox, FormControlLabel, Toolbar, Typography} from "@mui/material";
-import {Clear, Palette, ViewList} from "@mui/icons-material";
+import {
+  AppBar,
+  Box,
+  Collapse,
+  IconButton, List,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography
+} from "@mui/material";
+import {
+  ExpandLess,
+  ExpandMore,
+  FilterAlt,
+  Palette,
+  Sort,
+  ViewList,
+  Visibility,
+  VisibilityOff
+} from "@mui/icons-material";
 import ColorFilterDialog from "../Dialog/ColorFilterDialog";
 import SetFilterDialog from "../Dialog/SetFilterDialog";
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import TooltipConfirmationModal from "../../_shared/TooltipConfirmationModal/TooltipConfirmationModal";
+import SortDialog from "../Dialog/SortDialog";
+import {SortBy} from "../../../model/sort/SortBy";
 
 interface PartsListContainerProps {
   parts: Part[];
@@ -22,9 +46,15 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
   const [colorFilterId, setColorFilterId] = useState<string>();
   const [setList, setSetList] = useState<string[]>([]);
   const [setFilter, setSetFilter] = useState<string>();
+  const [sortBy, setSortBy] = useState<SortBy>(SortBy.ID);
   const [clearConfirmationModalOpen, setClearConfirmationModalOpen] = useState(false);
   const [colorFilterDialogOpen, setColorFilterDialogOpen] = useState<boolean>(false);
   const [setFilterDialogOpen, setSetFilterDialogOpen] = useState<boolean>(false);
+  const [sortDialogOpen, setSortDialogOpen] = useState<boolean>(false);
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [filterAndSortMenuOpen, setFilterAndSortMenuOpen] = useState<boolean>(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -67,27 +97,63 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
       <AppBar position={'fixed'}>
         <Toolbar sx={{backgroundColor: '#BBBBBB'}}>
           <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
-            <Box sx={{position: 'relative'}}>
-              <Button
-                variant='contained'
-                startIcon={<Palette />}
-                onClick={() => {
-                  setColorFilterDialogOpen(true)
-                }}
-                sx={{marginRight: '5px'}}
-              >Colors</Button>
-              {setList.length > 1 && (
-                <Button
-                  variant='contained'
-                  startIcon={<ViewList />}
-                  onClick={() => {
-                    setSetFilterDialogOpen(true)
-                  }}
-                  sx={{marginRight: '5px'}}
-                >Sets</Button>
-              )}
+            <Box sx={{display: 'flex', alignItems: 'center', width: '100%'}}>
+              <Box sx={{position: 'relative'}}>
+                <Typography variant='h5' sx={{color: '#000000', marginRight: '10px'}}>Part Finder</Typography>
+              </Box>
+              <Box sx={{position: 'relative'}}>
+                <img src={'assets/images/part-finder.png'} height={30} alt={'part-finder-img'} />
+              </Box>
             </Box>
-            <Box sx={{position: 'relative'}}>
+            <IconButton edge="start" color="inherit" aria-label="menu" onClick={(event) => {
+              setMenuOpen(!menuOpen);
+              setMenuAnchorEl(event.currentTarget);
+            }}>
+              {menuOpen ? <CloseIcon /> : <MenuIcon />}
+            </IconButton>
+            <Menu open={menuOpen} onClose={() => setMenuOpen(!menuOpen)} anchorEl={menuAnchorEl}>
+              <MenuItem onClick={() => setFilterAndSortMenuOpen(!filterAndSortMenuOpen)}>
+                <ListItemIcon>
+                  <FilterAlt fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Filter & Sort</ListItemText>
+                {filterAndSortMenuOpen ? <ExpandLess /> : <ExpandMore />}
+              </MenuItem>
+              <Collapse in={filterAndSortMenuOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  {colorList.length > 1 && (
+                    <MenuItem onClick={() => setColorFilterDialogOpen(true)} sx={{ pl: 4 }}>
+                      <ListItemIcon>
+                        <Palette fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText>Colors</ListItemText>
+                    </MenuItem>
+                  )}
+                  {setList.length > 1 && (
+                    <MenuItem onClick={() => setSetFilterDialogOpen(true)} sx={{ pl: 4 }}>
+                      <ListItemIcon>
+                        <ViewList fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText>Sets/Lists</ListItemText>
+                    </MenuItem>
+                  )}
+                  <MenuItem onClick={() => setSortDialogOpen(true)} sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <Sort fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Sort By...</ListItemText>
+                  </MenuItem>
+                </List>
+              </Collapse>
+              <MenuItem onClick={() => {
+                setMenuOpen(false);
+                setShowCompletedParts(!showCompletedParts);
+              }}>
+                <ListItemIcon>
+                  {showCompletedParts ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                </ListItemIcon>
+                <ListItemText>{showCompletedParts ? 'Hide' : 'Show'} Completed</ListItemText>
+              </MenuItem>
               <TooltipConfirmationModal
                 content={
                   <Typography sx={{fontSize: '14px', textAlign: 'center'}}>
@@ -98,31 +164,32 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
                 onConfirm={clearAllParts}
                 confirmButtonText={'Clear'}
                 placement={'bottom'}>
-                <Button
-                  variant='outlined'
-                  color='error'
-                  sx={{position: 'fixed', top: '10px', right: '10px'}}
-                  onClick={() => setClearConfirmationModalOpen(true)}
-                >
-                  <Clear />
-                </Button>
+                <MenuItem onClick={() => setClearConfirmationModalOpen(true)}>
+                  <ListItemIcon>
+                    <CloseIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>Reset</ListItemText>
+                </MenuItem>
               </TooltipConfirmationModal>
-            </Box>
+            </Menu>
           </Box>
         </Toolbar>
       </AppBar>
+      {menuOpen && (
+        <Box sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1000,
+          opacity: menuOpen ? 1 : 0,
+          visibility: menuOpen ? 'visible' : 'hidden',
+          transition: 'opacity 0.3s ease, visibility 0.3s ease',
+        }} />
+      )}
       <Box sx={{overflowX: 'auto', marginTop: '60px'}}>
-        <FormControlLabel
-          control={
-            <Checkbox
-              value={showCompletedParts}
-              checked={showCompletedParts}
-              onChange={() => {
-                setShowCompletedParts(!showCompletedParts);
-              }}
-            />
-          }
-          label={'Show Completed Parts'}/>
         <Typography>{`${partsCleared} ${partsCleared === 1 ? 'part' : 'parts'} found, ${lotsCleared} ${lotsCleared === 1 ? 'lot' : 'lots'} cleared!`}</Typography>
         {parts.filter(part => {
           if (showCompletedParts) {
@@ -130,7 +197,21 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
           } else {
             return (colorFilterId ? part.colorId === colorFilterId : true) && (setFilter ? part.set === setFilter : true) && (part.quantityHave !== part.quantityNeeded);
           }
-        }).sort((a, b) => a.id.localeCompare(b.id)).map((part, index) => (
+        }).sort((a, b) => {
+          switch (sortBy) {
+            default:
+            case SortBy.ID:
+              return a.id.localeCompare(b.id);
+            case SortBy.NAME:
+              return a.name.localeCompare(b.name);
+            case SortBy.NAME_COLOR:
+              return (colorMap.get(a.colorId) + ' ' + a.name).localeCompare(colorMap.get(b.colorId) + ' ' + b.name)
+            case SortBy.QUANTITY_DESC:
+              return b.quantityNeeded - a.quantityNeeded;
+            case SortBy.QUANTITY_ASC:
+              return a.quantityNeeded - b.quantityNeeded;
+          }
+        }).map((part, index) => (
           <PartRow part={part} key={index}/>
         ))}
       </Box>
@@ -138,13 +219,27 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
         open={colorFilterDialogOpen}
         onClose={() => setColorFilterDialogOpen(false)}
         colorList={colorList}
-        setFilterOnColor={setColorFilterId}
+        setFilterOnColor={(colorFilterId) => {
+          setColorFilterId(colorFilterId);
+          setMenuOpen(false);
+        }}
       />
       <SetFilterDialog
         open={setFilterDialogOpen}
         onClose={() => setSetFilterDialogOpen(false)}
         setList={setList}
-        setFilterOnSet={setSetFilter}
+        setFilterOnSet={(setFilter) => {
+          setSetFilter(setFilter);
+          setMenuOpen(false);
+        }}
+      />
+      <SortDialog
+        open={sortDialogOpen}
+        onClose={() => setSortDialogOpen(false)}
+        setSortBy={(sortBy) => {
+          setSortBy(sortBy);
+          setMenuOpen(false);
+        }}
       />
     </>
   )
