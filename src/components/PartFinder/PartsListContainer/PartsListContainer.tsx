@@ -117,7 +117,7 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
                 <img src={'assets/images/part-finder.png'} height={30} alt={'part-finder-img'} />
               </Box>
             </Box>
-            <IconButton edge="start" color="inherit" aria-label="menu" onClick={(event) => {
+            <IconButton sx={{color: '#000000'}} edge="start" aria-label="menu" onClick={(event) => {
               setMenuOpen(!menuOpen);
               setMenuAnchorEl(event.currentTarget);
             }}>
