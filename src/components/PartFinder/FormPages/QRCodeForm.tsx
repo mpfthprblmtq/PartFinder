@@ -22,7 +22,7 @@ const QRCodeForm: FC<QRCodeFormProps> = ({id, method}) => {
             <Link target='_blank' to={`/${id}`}>Or you can click here to view the parts.</Link>
           </Typography>
           <Box sx={{padding: '10px', marginTop: '10px', marginBottom: '10px', textAlign: 'center'}}>
-            <QRCode value={'https://prblmtq.com/projects/part-finder/#/' + id}/>
+            <QRCode value={'https://www.prblmtq.com/projects/part-finder/#/' + id}/>
           </Box>
         </Box>
       ) : (
