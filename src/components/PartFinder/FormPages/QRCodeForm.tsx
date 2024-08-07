@@ -32,7 +32,6 @@ const QRCodeForm: FC<QRCodeFormProps> = ({id, method}) => {
           </Typography>
           <Button
             href={`/projects/part-finder/#/${id}`}
-            target='_blank'
             variant="contained"
             color="primary"
             size='large'
