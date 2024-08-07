@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Part } from "../../model/part/Part";
+import {SortBy} from "../../model/sort/SortBy";
 
 export interface PartFinderState {
   parts: Part[];
   colorFilterId: string;
   setFilterId: string;
+  sortBy: SortBy;
   partsCleared: number;
   lotsCleared: number;
 }
@@ -13,6 +15,7 @@ const initialState: PartFinderState = {
   parts: [],
   colorFilterId: '',
   setFilterId: '',
+  sortBy: SortBy.ID,
   partsCleared: 0,
   lotsCleared: 0
 }
@@ -50,9 +53,25 @@ export const partFinderSlice = createSlice({
           state.lotsCleared--;
         }
       }
+    },
+    setSortBy: (state, action) => {
+      state.sortBy = action.payload;
+    },
+    setColorFilterId: (state, action) => {
+      state.colorFilterId = action.payload;
+    },
+    setSetFilterId: (state, action) => {
+      state.setFilterId = action.payload;
     }
   }
 });
 
-export const { updatePartCount, addPartsToStore, removeAllPartsFromStore } = partFinderSlice.actions;
+export const {
+  updatePartCount,
+  addPartsToStore,
+  removeAllPartsFromStore,
+  setSortBy,
+  setColorFilterId,
+  setSetFilterId
+} = partFinderSlice.actions;
 export default partFinderSlice.reducer;

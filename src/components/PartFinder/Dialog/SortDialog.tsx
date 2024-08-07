@@ -1,19 +1,17 @@
-import React, {FC, memo, useState} from "react";
+import React, {FC, memo} from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItemButton} from "@mui/material";
 import {SortBy} from "../../../model/sort/SortBy";
 
 interface SortDialogParams {
   open: boolean;
   onClose: () => void;
+  sortBy: SortBy;
   setSortBy: (sortBy: SortBy) => void;
 }
 
-const SortDialog: FC<SortDialogParams> = ({open, onClose, setSortBy}) => {
-
-  const [selectedSortBy, setSelectedSortBy] = useState<SortBy>(SortBy.ID);
+const SortDialog: FC<SortDialogParams> = ({open, onClose, sortBy, setSortBy}) => {
 
   const handleListItemClick = (sortBy: SortBy) => {
-    setSelectedSortBy(sortBy);
     setSortBy(sortBy);
     onClose();
   };
@@ -24,29 +22,29 @@ const SortDialog: FC<SortDialogParams> = ({open, onClose, setSortBy}) => {
       <DialogContent>
         <List component='nav'>
           <ListItemButton
-            selected={selectedSortBy === SortBy.ID}
+            selected={sortBy === SortBy.ID}
             onClick={() => handleListItemClick(SortBy.ID)}>
-            {selectedSortBy === SortBy.ID ? <strong>Part ID</strong> : 'Part ID'}
+            {sortBy === SortBy.ID ? <strong>Part ID</strong> : 'Part ID'}
           </ListItemButton>
           <ListItemButton
-            selected={selectedSortBy === SortBy.NAME}
+            selected={sortBy === SortBy.NAME}
             onClick={() => handleListItemClick(SortBy.NAME)}>
-            {selectedSortBy === SortBy.NAME ? <strong>Name</strong> : 'Name'}
+            {sortBy === SortBy.NAME ? <strong>Name</strong> : 'Name'}
           </ListItemButton>
           <ListItemButton
-            selected={selectedSortBy === SortBy.NAME_COLOR}
+            selected={sortBy === SortBy.NAME_COLOR}
             onClick={() => handleListItemClick(SortBy.NAME_COLOR)}>
-            {selectedSortBy === SortBy.NAME_COLOR ? <strong>Name, Color</strong> : 'Name, Color'}
+            {sortBy === SortBy.NAME_COLOR ? <strong>Name, Color</strong> : 'Name, Color'}
           </ListItemButton>
           <ListItemButton
-            selected={selectedSortBy === SortBy.QUANTITY_DESC}
+            selected={sortBy === SortBy.QUANTITY_DESC}
             onClick={() => handleListItemClick(SortBy.QUANTITY_DESC)}>
-            {selectedSortBy === SortBy.QUANTITY_DESC ? <strong>Quantity Needed (Desc)</strong> : 'Quantity Needed (Desc)'}
+            {sortBy === SortBy.QUANTITY_DESC ? <strong>Quantity Needed (Desc)</strong> : 'Quantity Needed (Desc)'}
           </ListItemButton>
           <ListItemButton
-            selected={selectedSortBy === SortBy.QUANTITY_ASC}
+            selected={sortBy === SortBy.QUANTITY_ASC}
             onClick={() => handleListItemClick(SortBy.QUANTITY_ASC)}>
-            {selectedSortBy === SortBy.QUANTITY_ASC ? <strong>Quantity Needed (Asc)</strong> : 'Quantity Needed (Asc)'}
+            {sortBy === SortBy.QUANTITY_ASC ? <strong>Quantity Needed (Asc)</strong> : 'Quantity Needed (Asc)'}
           </ListItemButton>
         </List>
       </DialogContent>

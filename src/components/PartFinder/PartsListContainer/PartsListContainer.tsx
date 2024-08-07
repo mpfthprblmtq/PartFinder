@@ -1,5 +1,10 @@
 import React, {FC, memo, useEffect, useState} from "react";
-import {removeAllPartsFromStore} from "../../../redux/slices/partFinderSlice";
+import {
+  removeAllPartsFromStore,
+  setColorFilterId,
+  setSetFilterId,
+  setSortBy
+} from "../../../redux/slices/partFinderSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {colorMap} from "../../../utils/ColorMap";
@@ -43,10 +48,10 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
 
   const [showCompletedParts, setShowCompletedParts] = useState<boolean>(false);
   const [colorList, setColorList] = useState<{ id: string, color: string }[]>([]);
-  const [colorFilterId, setColorFilterId] = useState<string>();
+  // const [colorFilterId, setColorFilterId] = useState<string>();
   const [setList, setSetList] = useState<string[]>([]);
-  const [setFilter, setSetFilter] = useState<string>();
-  const [sortBy, setSortBy] = useState<SortBy>(SortBy.ID);
+  // const [setFilter, setSetFilter] = useState<string>();
+  // const [sortBy, setSortBy] = useState<SortBy>(SortBy.ID);
   const [clearConfirmationModalOpen, setClearConfirmationModalOpen] = useState(false);
   const [colorFilterDialogOpen, setColorFilterDialogOpen] = useState<boolean>(false);
   const [setFilterDialogOpen, setSetFilterDialogOpen] = useState<boolean>(false);
@@ -61,6 +66,9 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
 
   const partsCleared: number = useSelector((state: any) => state.partFinderStore.partsCleared);
   const lotsCleared: number = useSelector((state: any) => state.partFinderStore.lotsCleared);
+  const colorFilterId: string = useSelector((state: any) => state.partFinderStore.colorFilterId);
+  const setFilterId: string = useSelector((state: any) => state.partFinderStore.setFilterId);
+  const sortBy: SortBy = useSelector((state: any) => state.partFinderStore.sortBy);
 
   // sets up the color list and the set list we use to filter
   useEffect(() => {
@@ -84,11 +92,12 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
 
   // clears all parts from the list and resets back to upload view
   const clearAllParts = () => {
-    setColorFilterId(undefined);
-    setSetFilter(undefined);
-    setShowCompletedParts(false);
-    // setId('');
+    // setColorFilterId(undefined);
+    // setSetFilter(undefined);
+    dispatch(setColorFilterId(undefined));
+    dispatch(setSetFilterId(undefined));
     dispatch(removeAllPartsFromStore());
+    setShowCompletedParts(false);
     navigate('/');
   }
 
@@ -193,9 +202,9 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
         <Typography>{`${partsCleared} ${partsCleared === 1 ? 'part' : 'parts'} found, ${lotsCleared} ${lotsCleared === 1 ? 'lot' : 'lots'} cleared!`}</Typography>
         {parts.filter(part => {
           if (showCompletedParts) {
-            return (colorFilterId ? part.colorId === colorFilterId : true) && (setFilter ? part.set === setFilter : true);
+            return (colorFilterId ? part.colorId === colorFilterId : true) && (setFilterId ? part.set === setFilterId : true);
           } else {
-            return (colorFilterId ? part.colorId === colorFilterId : true) && (setFilter ? part.set === setFilter : true) && (part.quantityHave !== part.quantityNeeded);
+            return (colorFilterId ? part.colorId === colorFilterId : true) && (setFilterId ? part.set === setFilterId : true) && (part.quantityHave !== part.quantityNeeded);
           }
         }).sort((a, b) => {
           switch (sortBy) {
@@ -219,8 +228,9 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
         open={colorFilterDialogOpen}
         onClose={() => setColorFilterDialogOpen(false)}
         colorList={colorList}
+        colorFilterId={colorFilterId}
         setFilterOnColor={(colorFilterId) => {
-          setColorFilterId(colorFilterId);
+          dispatch(setColorFilterId(colorFilterId));
           setMenuOpen(false);
         }}
       />
@@ -228,16 +238,18 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
         open={setFilterDialogOpen}
         onClose={() => setSetFilterDialogOpen(false)}
         setList={setList}
+        setFilterId={setFilterId}
         setFilterOnSet={(setFilter) => {
-          setSetFilter(setFilter);
+          dispatch(setSetFilterId(setFilter));
           setMenuOpen(false);
         }}
       />
       <SortDialog
         open={sortDialogOpen}
         onClose={() => setSortDialogOpen(false)}
+        sortBy={sortBy}
         setSortBy={(sortBy) => {
-          setSortBy(sortBy);
+          dispatch(setSortBy(sortBy));
           setMenuOpen(false);
         }}
       />

@@ -1,4 +1,4 @@
-import React, { FC, memo, useState } from "react";
+import React, { FC, memo } from "react";
 import {
   Button,
   Dialog,
@@ -13,15 +13,13 @@ interface ColorFilterDialogParams {
   open: boolean;
   onClose: () => void;
   colorList: {id: string, color: string}[];
+  colorFilterId: string;
   setFilterOnColor: (id: string | undefined) => void;
 }
 
-const ColorFilterDialog: FC<ColorFilterDialogParams> = ({open, onClose, colorList, setFilterOnColor}) => {
-
-  const [selectedIndex, setSelectedIndex] = useState<string>();
+const ColorFilterDialog: FC<ColorFilterDialogParams> = ({open, onClose, colorList, colorFilterId, setFilterOnColor}) => {
 
   const handleListItemClick = (index: string | undefined) => {
-    setSelectedIndex(index);
     setFilterOnColor(index);
     onClose();
   };
@@ -33,16 +31,16 @@ const ColorFilterDialog: FC<ColorFilterDialogParams> = ({open, onClose, colorLis
         <List component='nav'>
           <ListItemButton
             key={'0'}
-            selected={!selectedIndex}
+            selected={!colorFilterId}
             onClick={() => handleListItemClick(undefined)}>
-            {!selectedIndex ? <strong>All</strong> : 'All'}
+            {!colorFilterId ? <strong>All</strong> : 'All'}
           </ListItemButton>
           {colorList.map(color => (
             <ListItemButton
               key={color.id}
-              selected={selectedIndex === color.id}
+              selected={colorFilterId === color.id}
               onClick={() => handleListItemClick(color.id)}>
-              {selectedIndex === color.id ? <strong>{color.color}</strong> : color.color}
+              {colorFilterId === color.id ? <strong>{color.color}</strong> : color.color}
             </ListItemButton>
           ))}
         </List>

@@ -1,4 +1,4 @@
-import React, { FC, memo, useState } from "react";
+import React, { FC, memo } from "react";
 import {
   Button,
   Dialog,
@@ -13,15 +13,13 @@ interface SetFilterDialogParams {
   open: boolean;
   onClose: () => void;
   setList: string[];
+  setFilterId: string;
   setFilterOnSet: (set: string | undefined) => void;
 }
 
-const SetFilterDialog: FC<SetFilterDialogParams> = ({open, onClose, setList, setFilterOnSet}) => {
-
-  const [selectedSet, setSelectedSet] = useState<string>();
+const SetFilterDialog: FC<SetFilterDialogParams> = ({open, onClose, setList, setFilterId, setFilterOnSet}) => {
 
   const handleListItemClick = (set: string | undefined) => {
-    setSelectedSet(set);
     setFilterOnSet(set);
     onClose();
   };
@@ -33,16 +31,16 @@ const SetFilterDialog: FC<SetFilterDialogParams> = ({open, onClose, setList, set
         <List component='nav'>
           <ListItemButton
             key={'0'}
-            selected={!selectedSet}
+            selected={!setFilterId}
             onClick={() => handleListItemClick(undefined)}>
-            {!selectedSet ? <strong>All</strong> : 'All'}
+            {!setFilterId ? <strong>All</strong> : 'All'}
           </ListItemButton>
           {setList.map(set => (
             <ListItemButton
               key={set}
-              selected={selectedSet === set}
+              selected={setFilterId === set}
               onClick={() => handleListItemClick(set)}>
-              {selectedSet === set ? <strong>{set}</strong> : set}
+              {setFilterId === set ? <strong>{set}</strong> : set}
             </ListItemButton>
           ))}
         </List>
