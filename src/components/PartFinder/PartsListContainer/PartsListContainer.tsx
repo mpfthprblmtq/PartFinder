@@ -25,7 +25,7 @@ import {
 import {
   ExpandLess,
   ExpandMore,
-  FilterAlt,
+  FilterAlt, FilterAltOff,
   Palette,
   Sort,
   ViewList,
@@ -92,13 +92,16 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
 
   // clears all parts from the list and resets back to upload view
   const clearAllParts = () => {
-    // setColorFilterId(undefined);
-    // setSetFilter(undefined);
-    dispatch(setColorFilterId(undefined));
-    dispatch(setSetFilterId(undefined));
+    clearFilters();
     dispatch(removeAllPartsFromStore());
     setShowCompletedParts(false);
     navigate('/');
+  }
+
+  const clearFilters = () => {
+    dispatch(setColorFilterId(undefined));
+    dispatch(setSetFilterId(undefined));
+    dispatch(setSortBy(SortBy.ID));
   }
 
   return (
@@ -151,6 +154,12 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
                       <Sort fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>Sort By...</ListItemText>
+                  </MenuItem>
+                  <MenuItem onClick={() => clearFilters()} sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <FilterAltOff fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Clear Filters</ListItemText>
                   </MenuItem>
                 </List>
               </Collapse>
