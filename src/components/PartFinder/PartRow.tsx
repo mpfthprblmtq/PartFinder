@@ -36,7 +36,7 @@ const PartRow: FC<PartRowParams> = ({part}) => {
     <div>
       <Box sx={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
         <Box sx={{position: 'relative', m: 1, minWidth: '80px', maxHeight: '50px', textAlign: 'center'}}>
-          {loading ? <CircularProgress size={50} /> : <img src={part.imageUrl} height={50} alt={'part-img'} onClick={openMoreInformationDialog}/>}
+          {loading ? <CircularProgress size={50} /> : <img src={part.imageUrl} height={50} alt={'part-img'} onClick={openMoreInformationDialog} style={{maxWidth: '100px'}}/>}
         </Box>
         <Box sx={{position: 'relative', m: 1, textAlign: 'center'}}>
           <Typography><a href={`https://www.bricklink.com/v2/catalog/catalogitem.page?P=${part.id}&idColor=${part.colorId}`}

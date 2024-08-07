@@ -40,7 +40,9 @@ export const useFileUploadService = () => {
                         id: xmlItem.ITEMID,
                         colorId: xmlItem.COLOR,
                         quantityNeeded: +xmlItem.MINQTY,
+                        originalQuantityNeeded: +xmlItem.MINQTY,
                         quantityHave: xmlItem.QTYFILLED ? +xmlItem.QTYFILLED : 0,
+                        originalQuantityHave: xmlItem.QTYFILLED ? +xmlItem.QTYFILLED : 0,
                         imageUrl: `https://img.bricklink.com/ItemImage/PN/${xmlItem.COLOR}/${xmlItem.ITEMID}.png`,
                         set: file.name.replace('.xml', '')
                       } as Part;

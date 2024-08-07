@@ -35,7 +35,7 @@ const ColorFilterDialog: FC<ColorFilterDialogParams> = ({open, onClose, colorLis
             onClick={() => handleListItemClick(undefined)}>
             {!colorFilterId ? <strong>All</strong> : 'All'}
           </ListItemButton>
-          {colorList.map(color => (
+          {colorList.filter(color => color.id !== undefined).map(color => (
             <ListItemButton
               key={color.id}
               selected={colorFilterId === color.id}
