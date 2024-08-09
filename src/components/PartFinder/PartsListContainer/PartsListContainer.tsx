@@ -16,7 +16,6 @@ interface PartsListContainerProps {
 
 const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
 
-  const [showCompletedParts, setShowCompletedParts] = useState<boolean>(false);
   const [colorList, setColorList] = useState<{ id: string, color: string }[]>([]);
   const [setList, setSetList] = useState<string[]>([]);
 
@@ -25,11 +24,12 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
   const colorFilterId: string = useSelector((state: any) => state.partFinderStore.colorFilterId);
   const setFilterId: string = useSelector((state: any) => state.partFinderStore.setFilterId);
   const sortBy: SortBy = useSelector((state: any) => state.partFinderStore.sortBy);
+  const showCompleted: boolean = useSelector((state: any) => state.partFinderStore.showCompleted);
 
   // sets up the color list and the set list we use to filter
   useEffect(() => {
     setColorList(parts.filter(part => {
-      if (showCompletedParts) {
+      if (showCompleted) {
         return true;
       } else {
         return part.quantityNeeded !== part.quantityHave;
@@ -53,13 +53,11 @@ const PartsListContainer: FC<PartsListContainerProps> = ({parts}) => {
       <PartsListNavBar
         colorList={colorList}
         setList={setList}
-        showCompletedParts={showCompletedParts}
-        setShowCompletedParts={setShowCompletedParts}
       />
       <Box sx={{overflowX: 'auto', marginTop: '60px'}}>
         <Typography>{`${partsCleared} ${partsCleared === 1 ? 'part' : 'parts'} found, ${lotsCleared} ${lotsCleared === 1 ? 'lot' : 'lots'} cleared!`}</Typography>
         {parts.filter(part => {
-          if (showCompletedParts) {
+          if (showCompleted) {
             return (colorFilterId ? part.colorId === colorFilterId : true) && (setFilterId ? part.set === setFilterId : true);
           } else {
             return (colorFilterId ? part.colorId === colorFilterId : true) && (setFilterId ? part.set === setFilterId : true) && (part.quantityHave !== part.quantityNeeded);

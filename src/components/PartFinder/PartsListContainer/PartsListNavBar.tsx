@@ -28,7 +28,7 @@ import ColorFilterDialog from "../Dialog/ColorFilterDialog";
 import {
   removeAllPartsFromStore,
   setColorFilterId,
-  setSetFilterId,
+  setSetFilterId, setShowCompleted,
   setSortBy
 } from "../../../redux/slices/partFinderSlice";
 import SetFilterDialog from "../Dialog/SetFilterDialog";
@@ -40,11 +40,9 @@ import {useNavigate} from "react-router-dom";
 interface PartsListNavBarProps {
   colorList: { id: string, color: string }[];
   setList: string[];
-  showCompletedParts: boolean;
-  setShowCompletedParts: (showCompletedParts: boolean) => void;
 }
 
-const PartsListNavBar: FC<PartsListNavBarProps> = ({colorList, setList, showCompletedParts, setShowCompletedParts}) => {
+const PartsListNavBar: FC<PartsListNavBarProps> = ({colorList, setList}) => {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -60,11 +58,11 @@ const PartsListNavBar: FC<PartsListNavBarProps> = ({colorList, setList, showComp
   const colorFilterId: string = useSelector((state: any) => state.partFinderStore.colorFilterId);
   const setFilterId: string = useSelector((state: any) => state.partFinderStore.setFilterId);
   const sortBy: SortBy = useSelector((state: any) => state.partFinderStore.sortBy);
+  const showCompleted: boolean = useSelector((state: any) => state.partFinderStore.showCompleted);
 
   const clearAllParts = () => {
     clearFilters();
     dispatch(removeAllPartsFromStore());
-    setShowCompletedParts(false);
     navigate('/');
   }
 
@@ -72,6 +70,7 @@ const PartsListNavBar: FC<PartsListNavBarProps> = ({colorList, setList, showComp
     dispatch(setColorFilterId(undefined));
     dispatch(setSetFilterId(undefined));
     dispatch(setSortBy(SortBy.ID));
+    dispatch(setShowCompleted(false));
   }
 
   return (
@@ -135,12 +134,12 @@ const PartsListNavBar: FC<PartsListNavBarProps> = ({colorList, setList, showComp
               </Collapse>
               <MenuItem onClick={() => {
                 setMenuOpen(false);
-                setShowCompletedParts(!showCompletedParts);
+                dispatch(setShowCompleted(!showCompleted));
               }}>
                 <ListItemIcon>
-                  {showCompletedParts ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                  {showCompleted ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                 </ListItemIcon>
-                <ListItemText>{showCompletedParts ? 'Hide' : 'Show'} Completed</ListItemText>
+                <ListItemText>{showCompleted ? 'Hide' : 'Show'} Completed</ListItemText>
               </MenuItem>
               <TooltipConfirmationModal
                 content={

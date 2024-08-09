@@ -7,6 +7,7 @@ export interface PartFinderState {
   colorFilterId: string;
   setFilterId: string;
   sortBy: SortBy;
+  showCompleted: boolean;
   partsCleared: number;
   lotsCleared: number;
 }
@@ -16,6 +17,7 @@ const initialState: PartFinderState = {
   colorFilterId: '',
   setFilterId: '',
   sortBy: SortBy.ID,
+  showCompleted: false,
   partsCleared: 0,
   lotsCleared: 0
 }
@@ -62,6 +64,9 @@ export const partFinderSlice = createSlice({
     },
     setSetFilterId: (state, action) => {
       state.setFilterId = action.payload;
+    },
+    setShowCompleted: (state, action) => {
+      state.showCompleted = action.payload;
     }
   }
 });
@@ -72,6 +77,7 @@ export const {
   removeAllPartsFromStore,
   setSortBy,
   setColorFilterId,
-  setSetFilterId
+  setSetFilterId,
+  setShowCompleted
 } = partFinderSlice.actions;
 export default partFinderSlice.reducer;
