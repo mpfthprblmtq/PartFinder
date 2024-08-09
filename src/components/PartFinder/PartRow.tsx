@@ -55,6 +55,7 @@ const PartRow: FC<PartRowParams> = ({part}) => {
               <Remove />
             </Button>
             <Button
+              disabled={subtract(part.quantityNeeded, part.quantityHave) === subtract(part.originalQuantityNeeded, part.originalQuantityHave)}
               variant="contained"
               color="success"
               onClick={() => dispatch(updatePartCount({...part, quantityHave: part.quantityHave - 1} as Part))}
