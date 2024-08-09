@@ -1,13 +1,13 @@
 import React, { FC, memo, useState } from "react";
-import { Part } from "../../model/part/Part";
+import { Part } from "../../../../model/part/Part";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
-import { colorMap } from "../../utils/ColorMap";
+import { colorMap } from "../../../../utils/ColorMap";
 import { subtract } from "lodash";
 import { Add, Remove } from "@mui/icons-material";
-import InformationDialog from "../_shared/InformationDialog/InformationDialog";
-import { useBrickLinkService } from "../../hooks/useBrickLinkService";
+import InformationDialog from "../../../_shared/InformationDialog/InformationDialog";
+import { useBrickLinkService } from "../../../../hooks/useBrickLinkService";
 import { useDispatch } from "react-redux";
-import { updatePartCount } from "../../redux/slices/partFinderSlice";
+import { updatePartCount } from "../../../../redux/slices/partFinderSlice";
 
 interface PartRowParams {
   part: Part;

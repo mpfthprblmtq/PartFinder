@@ -1,11 +1,11 @@
 import React, {FC, memo, useState} from "react";
-import MethodForm from "../FormPages/MethodForm";
-import UploadForm from "../FormPages/UploadForm";
-import QRCodeForm from "../FormPages/QRCodeForm";
+import MethodForm from "./FormPages/MethodForm";
+import UploadForm from "./FormPages/UploadForm";
+import QRCodeForm from "./FormPages/QRCodeForm";
 import {AppBar, Box, Button, Toolbar, Typography} from "@mui/material";
 import {ChevronLeft, ChevronRight} from "@mui/icons-material";
 import {Method} from "../../../model/method/Method";
-import DownloadForm from "../FormPages/DownloadForm";
+import DownloadForm from "./FormPages/DownloadForm";
 
 const FormContainer: FC = () => {
 

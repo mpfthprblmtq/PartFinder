@@ -4,10 +4,10 @@ import { addPartsToStore } from "../../redux/slices/partFinderSlice";
 import { usePartFinderService } from "../../hooks/dynamo/usePartFinderService";
 import { useNavigate, useParams } from "react-router-dom";
 import { Part } from "../../model/part/Part";
-import PartsListContainer from "./PartsListContainer/PartsListContainer";
 import FormContainer from "./FormContainer/FormContainer";
 import Version from "../_shared/Version/Version";
 import {Box} from "@mui/material";
+import PartsContainer from "./PartsContainer/PartsContainer";
 
 const PartFinder: FunctionComponent = () => {
 
@@ -37,7 +37,7 @@ const PartFinder: FunctionComponent = () => {
 
   return (
     <Box>
-      {parts.length > 0 ? <PartsListContainer parts={parts} /> : <FormContainer />}
+      {parts.length > 0 ? <PartsContainer parts={parts} /> : <FormContainer />}
       <Version />
     </Box>
   )

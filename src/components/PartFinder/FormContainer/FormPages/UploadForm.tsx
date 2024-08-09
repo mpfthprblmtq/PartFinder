@@ -1,10 +1,10 @@
 import React, {FC, memo, useEffect, useRef, useState} from "react";
-import {useFileUploadService} from "../../../hooks/useFileUploadService";
-import {usePartFinderService} from "../../../hooks/dynamo/usePartFinderService";
+import {useFileUploadService} from "../../../../hooks/useFileUploadService";
+import {usePartFinderService} from "../../../../hooks/dynamo/usePartFinderService";
 import {Box, Button, LinearProgress, Typography} from "@mui/material";
 import {UploadFile} from "@mui/icons-material";
-import {useBrickLinkService} from "../../../hooks/useBrickLinkService";
-import {Part} from "../../../model/part/Part";
+import {useBrickLinkService} from "../../../../hooks/useBrickLinkService";
+import {Part} from "../../../../model/part/Part";
 
 interface UploadFormProps {
   setId: (id: string) => void;

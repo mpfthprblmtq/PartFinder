@@ -1,5 +1,5 @@
 import {FC, memo} from "react";
-import {Method} from "../../../model/method/Method";
+import {Method} from "../../../../model/method/Method";
 import {Box, FormControl, FormControlLabel, Radio, RadioGroup, Typography} from "@mui/material";
 
 interface MethodFormProps {

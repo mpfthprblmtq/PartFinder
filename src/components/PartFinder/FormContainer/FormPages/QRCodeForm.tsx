@@ -2,7 +2,7 @@ import {FC, memo} from "react";
 import {Box, Button, Typography} from "@mui/material";
 import {Link} from "react-router-dom";
 import QRCode from "react-qr-code";
-import {Method} from "../../../model/method/Method";
+import {Method} from "../../../../model/method/Method";
 import {OpenInNew} from "@mui/icons-material";
 
 interface QRCodeFormProps {

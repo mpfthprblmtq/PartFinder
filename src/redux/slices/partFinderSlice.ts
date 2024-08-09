@@ -1,6 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { Part } from "../../model/part/Part";
+import {createSlice} from "@reduxjs/toolkit";
+import {Part} from "../../model/part/Part";
 import {SortBy} from "../../model/sort/SortBy";
+import {CurrentView} from "../../model/currentView/CurrentView";
 
 export interface PartFinderState {
   parts: Part[];
@@ -10,6 +11,7 @@ export interface PartFinderState {
   showCompleted: boolean;
   partsCleared: number;
   lotsCleared: number;
+  currentView: CurrentView;
 }
 
 const initialState: PartFinderState = {
@@ -19,7 +21,8 @@ const initialState: PartFinderState = {
   sortBy: SortBy.ID,
   showCompleted: false,
   partsCleared: 0,
-  lotsCleared: 0
+  lotsCleared: 0,
+  currentView: CurrentView.PART_FINDER
 }
 
 export const partFinderSlice = createSlice({
@@ -67,6 +70,9 @@ export const partFinderSlice = createSlice({
     },
     setShowCompleted: (state, action) => {
       state.showCompleted = action.payload;
+    },
+    setCurrentView: (state, action) => {
+      state.currentView = action.payload;
     }
   }
 });
@@ -78,6 +84,7 @@ export const {
   setSortBy,
   setColorFilterId,
   setSetFilterId,
-  setShowCompleted
+  setShowCompleted,
+  setCurrentView
 } = partFinderSlice.actions;
 export default partFinderSlice.reducer;

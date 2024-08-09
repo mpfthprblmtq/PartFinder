@@ -14,21 +14,23 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
+  ContentPasteSearch,
   ExpandLess,
   ExpandMore,
-  FilterAlt,
-  FilterAltOff,
+  FilterAlt, FilterAltOff,
+  Grading,
   Palette,
   Sort,
-  ViewList, Visibility,
-  VisibilityOff
+  ViewList, Visibility, VisibilityOff
 } from "@mui/icons-material";
 import TooltipConfirmationModal from "../../_shared/TooltipConfirmationModal/TooltipConfirmationModal";
 import ColorFilterDialog from "../Dialog/ColorFilterDialog";
 import {
   removeAllPartsFromStore,
   setColorFilterId,
-  setSetFilterId, setShowCompleted,
+  setCurrentView,
+  setSetFilterId,
+  setShowCompleted,
   setSortBy
 } from "../../../redux/slices/partFinderSlice";
 import SetFilterDialog from "../Dialog/SetFilterDialog";
@@ -36,13 +38,14 @@ import SortDialog from "../Dialog/SortDialog";
 import {useDispatch, useSelector} from "react-redux";
 import {SortBy} from "../../../model/sort/SortBy";
 import {useNavigate} from "react-router-dom";
+import {CurrentView} from "../../../model/currentView/CurrentView";
 
 interface PartsListNavBarProps {
   colorList: { id: string, color: string }[];
   setList: string[];
 }
 
-const PartsListNavBar: FC<PartsListNavBarProps> = ({colorList, setList}) => {
+const PartsContainerNavBar: FC<PartsListNavBarProps> = ({colorList, setList}) => {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -59,6 +62,7 @@ const PartsListNavBar: FC<PartsListNavBarProps> = ({colorList, setList}) => {
   const setFilterId: string = useSelector((state: any) => state.partFinderStore.setFilterId);
   const sortBy: SortBy = useSelector((state: any) => state.partFinderStore.sortBy);
   const showCompleted: boolean = useSelector((state: any) => state.partFinderStore.showCompleted);
+  const currentView: CurrentView = useSelector((state: any) => state.partFinderStore.currentView);
 
   const clearAllParts = () => {
     clearFilters();
@@ -93,53 +97,71 @@ const PartsListNavBar: FC<PartsListNavBarProps> = ({colorList, setList}) => {
               {menuOpen ? <CloseIcon /> : <MenuIcon />}
             </IconButton>
             <Menu open={menuOpen} onClose={() => setMenuOpen(!menuOpen)} anchorEl={menuAnchorEl}>
-              <MenuItem onClick={() => setFilterAndSortMenuOpen(!filterAndSortMenuOpen)}>
-                <ListItemIcon>
-                  <FilterAlt fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Filter & Sort</ListItemText>
-                {filterAndSortMenuOpen ? <ExpandLess /> : <ExpandMore />}
-              </MenuItem>
-              <Collapse in={filterAndSortMenuOpen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {colorList.length > 1 && (
-                    <MenuItem onClick={() => setColorFilterDialogOpen(true)} sx={{ pl: 4 }}>
-                      <ListItemIcon>
-                        <Palette fontSize="small" />
-                      </ListItemIcon>
-                      <ListItemText>Colors</ListItemText>
-                    </MenuItem>
-                  )}
-                  {setList.length > 1 && (
-                    <MenuItem onClick={() => setSetFilterDialogOpen(true)} sx={{ pl: 4 }}>
-                      <ListItemIcon>
-                        <ViewList fontSize="small" />
-                      </ListItemIcon>
-                      <ListItemText>Sets/Lists</ListItemText>
-                    </MenuItem>
-                  )}
-                  <MenuItem onClick={() => setSortDialogOpen(true)} sx={{ pl: 4 }}>
+              {currentView === CurrentView.PART_FINDER && (
+                <>
+                  <MenuItem onClick={() => setFilterAndSortMenuOpen(!filterAndSortMenuOpen)}>
                     <ListItemIcon>
-                      <Sort fontSize="small" />
+                      <FilterAlt fontSize="small" />
                     </ListItemIcon>
-                    <ListItemText>Sort By...</ListItemText>
+                    <ListItemText>Filter & Sort</ListItemText>
+                    {filterAndSortMenuOpen ? <ExpandLess /> : <ExpandMore />}
                   </MenuItem>
-                  <MenuItem onClick={() => clearFilters()} sx={{ pl: 4 }}>
+                  <Collapse in={filterAndSortMenuOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      {colorList.length > 1 && (
+                        <MenuItem onClick={() => setColorFilterDialogOpen(true)} sx={{ pl: 4 }}>
+                          <ListItemIcon>
+                            <Palette fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText>Colors</ListItemText>
+                        </MenuItem>
+                      )}
+                      {setList.length > 1 && (
+                        <MenuItem onClick={() => setSetFilterDialogOpen(true)} sx={{ pl: 4 }}>
+                          <ListItemIcon>
+                            <ViewList fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText>Sets/Lists</ListItemText>
+                        </MenuItem>
+                      )}
+                      <MenuItem onClick={() => setSortDialogOpen(true)} sx={{ pl: 4 }}>
+                        <ListItemIcon>
+                          <Sort fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Sort By...</ListItemText>
+                      </MenuItem>
+                      <MenuItem onClick={() => {
+                        clearFilters();
+                        setMenuOpen(false);
+                      }} sx={{ pl: 4 }}>
+                        <ListItemIcon>
+                          <FilterAltOff fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Clear Filters</ListItemText>
+                      </MenuItem>
+                    </List>
+                  </Collapse>
+                  <MenuItem onClick={() => {
+                    setMenuOpen(false);
+                    dispatch(setShowCompleted(!showCompleted));
+                  }}>
                     <ListItemIcon>
-                      <FilterAltOff fontSize="small" />
+                      {showCompleted ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                     </ListItemIcon>
-                    <ListItemText>Clear Filters</ListItemText>
+                    <ListItemText>{showCompleted ? 'Hide' : 'Show'} Completed</ListItemText>
                   </MenuItem>
-                </List>
-              </Collapse>
+                </>
+              )}
               <MenuItem onClick={() => {
+                dispatch(setCurrentView(
+                  currentView === CurrentView.PART_FINDER ? CurrentView.PART_REPORT : CurrentView.PART_FINDER));
                 setMenuOpen(false);
-                dispatch(setShowCompleted(!showCompleted));
               }}>
                 <ListItemIcon>
-                  {showCompleted ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                  {currentView === CurrentView.PART_FINDER ?
+                    <Grading fontSize="small" /> : <ContentPasteSearch fontSize="small" />}
                 </ListItemIcon>
-                <ListItemText>{showCompleted ? 'Hide' : 'Show'} Completed</ListItemText>
+                <ListItemText>{currentView === CurrentView.PART_FINDER ? 'Show Report' : 'Show Finder'}</ListItemText>
               </MenuItem>
               <TooltipConfirmationModal
                 content={
@@ -195,4 +217,4 @@ const PartsListNavBar: FC<PartsListNavBarProps> = ({colorList, setList}) => {
   );
 };
 
-export default PartsListNavBar;
+export default PartsContainerNavBar;
