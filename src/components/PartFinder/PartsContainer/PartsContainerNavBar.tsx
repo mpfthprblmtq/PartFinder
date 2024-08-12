@@ -67,6 +67,7 @@ const PartsContainerNavBar: FC<PartsListNavBarProps> = ({colorList, setList}) =>
   const clearAllParts = () => {
     clearFilters();
     dispatch(removeAllPartsFromStore());
+    dispatch(setCurrentView(CurrentView.PART_FINDER));
     navigate('/');
   }
 
@@ -98,7 +99,7 @@ const PartsContainerNavBar: FC<PartsListNavBarProps> = ({colorList, setList}) =>
             </IconButton>
             <Menu open={menuOpen} onClose={() => setMenuOpen(!menuOpen)} anchorEl={menuAnchorEl}>
               {currentView === CurrentView.PART_FINDER && (
-                <>
+                <Box>
                   <MenuItem onClick={() => setFilterAndSortMenuOpen(!filterAndSortMenuOpen)}>
                     <ListItemIcon>
                       <FilterAlt fontSize="small" />
@@ -150,7 +151,7 @@ const PartsContainerNavBar: FC<PartsListNavBarProps> = ({colorList, setList}) =>
                     </ListItemIcon>
                     <ListItemText>{showCompleted ? 'Hide' : 'Show'} Completed</ListItemText>
                   </MenuItem>
-                </>
+                </Box>
               )}
               <MenuItem onClick={() => {
                 dispatch(setCurrentView(

@@ -27,7 +27,7 @@ const PartsReportContainer: FC<PartsReportContainerProps> = ({parts, setList}) =
 
   return (
     <Box sx={{overflowX: 'auto', marginTop: '60px'}}>
-      {setsMap && Array.from(setsMap.keys()).map(set => (
+      {setsMap && setsMap.size > 0 ? Array.from(setsMap.keys()).map(set => (
         <Accordion key={set}>
           <AccordionSummary expandIcon={<ExpandMore />}>{set}</AccordionSummary>
           <AccordionDetails sx={{margin: 0}}>
@@ -39,7 +39,9 @@ const PartsReportContainer: FC<PartsReportContainerProps> = ({parts, setList}) =
             ))}
           </AccordionDetails>
         </Accordion>
-      ))}
+      )) : (
+        <>Nope</>
+      )}
     </Box>
   );
 }
