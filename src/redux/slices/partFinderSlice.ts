@@ -18,7 +18,7 @@ const initialState: PartFinderState = {
   parts: [],
   colorFilterId: '',
   setFilterId: '',
-  sortBy: SortBy.ID,
+  sortBy: SortBy.NAME_COLOR,
   showCompleted: false,
   partsCleared: 0,
   lotsCleared: 0,

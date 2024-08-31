@@ -33,15 +33,14 @@ const PartRow: FC<PartRowParams> = ({part}) => {
         <Box sx={{position: 'relative', m: 1, minWidth: '80px', maxHeight: '50px', textAlign: 'center'}}>
           {loading ? <CircularProgress size={50} /> : <img src={part.imageUrl} height={50} alt={'part-img'} onClick={openMoreInformationDialog} style={{maxWidth: '100px'}}/>}
         </Box>
-        <Box sx={{position: 'relative', m: 1, textAlign: 'center'}}>
-          <Typography><a href={`https://www.bricklink.com/v2/catalog/catalogitem.page?P=${part.id}&idColor=${part.colorId}`}
-                         target={'_blank'} rel="noreferrer">{part.id}</a></Typography>
-          <Typography sx={{fontSize: '14px'}}>{colorMap.get(part.colorId)}</Typography>
+        <Box sx={{position: 'relative', m: 1, textAlign: 'center'}} onClick={() => setMoreInformationDialogOpen(true)}>
+          <Typography sx={{fontSize: '12px'}}>{part.name}</Typography>
+          <Typography sx={{fontSize: '10px'}}>{colorMap.get(part.colorId)}</Typography>
         </Box>
-        <Box sx={{position: 'relative', m: 1}}>
-          <Box sx={{display: 'flex', alignItems: 'center'}}>
+        <Box sx={{position: 'relative', m: 1, minWidth: '20%'}}>
+          <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
             <Typography sx={{fontSize: '20px', marginRight: '10px'}}>
-              {subtract(part.quantityHave, part.originalQuantityHave)}
+              {subtract(part.quantityHave, part.originalQuantityHave)} / {subtract(part.quantityNeeded, part.originalQuantityHave)}
             </Typography>
           </Box>
         </Box>
@@ -55,6 +54,15 @@ const PartRow: FC<PartRowParams> = ({part}) => {
             <img src={part.imageUrl} width={'100%'} alt={'large-img'} />
             <table>
               <tbody>
+              <tr>
+                <td><strong>BrickLink:</strong></td>
+                <td>
+                  <Typography>
+                    <a href={`https://www.bricklink.com/v2/catalog/catalogitem.page?P=${part.id}&idColor=${part.colorId}`}
+                                 target={'_blank'} rel="noreferrer">{part.id}</a>
+                  </Typography>
+                </td>
+              </tr>
               <tr>
                 <td><strong>Name:</strong></td>
                 <td>{part.name}</td>

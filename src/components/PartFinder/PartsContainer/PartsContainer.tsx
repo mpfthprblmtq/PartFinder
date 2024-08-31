@@ -18,6 +18,7 @@ const PartsContainer: FC<PartsContainerProps> = ({parts}) => {
 
   const currentView: CurrentView = useSelector((state: any) => state.partFinderStore.currentView);
   const showCompleted: boolean = useSelector((state: any) => state.partFinderStore.showCompleted);
+  const setFilterId: string = useSelector((state: any) => state.partFinderStore.setFilterId);
 
   // sets up the color list and the set list we use to filter
   useEffect(() => {
@@ -27,6 +28,8 @@ const PartsContainer: FC<PartsContainerProps> = ({parts}) => {
       } else {
         return part.quantityNeeded !== part.quantityHave;
       }
+    }).filter(part => {
+      return setFilterId ? part.set === setFilterId : true;
     }).map(part => {
       return {color: colorMap.get(part.colorId) ?? "", id: part.colorId};
     }).filter(({color, id}, index, self) => {
@@ -37,7 +40,7 @@ const PartsContainer: FC<PartsContainerProps> = ({parts}) => {
       .filter((value, index, self) => self.findIndex(e => e === value) === index)
       .sort((a, b) => a.localeCompare(b)));
     // eslint-disable-next-line
-  }, [parts]);
+  }, [parts, setFilterId, showCompleted]);
 
   return (
     <>

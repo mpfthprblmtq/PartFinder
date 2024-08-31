@@ -33,9 +33,28 @@ export const useFileUploadService = () => {
                   reject('Failed to parse XML!');
                 } else {
                   const partsChunk: Part[] = [];
-                  partsChunk.push(...result.INVENTORY.ITEM
-                    .filter((xmlItem: any) => xmlItem.MINQTY !== xmlItem.QTYFILLED)
-                    .map((xmlItem: any) => {
+                  if (Array.isArray(result.INVENTORY.ITEM)) {
+                    partsChunk.push(...result.INVENTORY.ITEM
+                      .filter((xmlItem: any) => xmlItem.MINQTY !== xmlItem.QTYFILLED)
+                      .map((xmlItem: any) => {
+                        const part = {
+                          id: xmlItem.ITEMID,
+                          colorId: xmlItem.COLOR,
+                          quantityNeeded: +xmlItem.MINQTY,
+                          originalQuantityNeeded: +xmlItem.MINQTY,
+                          quantityHave: xmlItem.QTYFILLED ? +xmlItem.QTYFILLED : 0,
+                          originalQuantityHave: xmlItem.QTYFILLED ? +xmlItem.QTYFILLED : 0,
+                          imageUrl: `https://img.bricklink.com/ItemImage/PN/${xmlItem.COLOR}/${xmlItem.ITEMID}.png`,
+                          set: file.name.replace('.xml', '')
+                        } as Part;
+                        lots++;
+                        parts = parts + (part.quantityNeeded - part.quantityHave);
+                        return part;
+                      }));
+                  } else {
+                    // this case is really only for lists with 1 item in it, which shouldn't happen often
+                    if (result.INVENTORY.ITEM.MINQTY !== result.INVENTORY.ITEM.QTYFILLED) {
+                      const xmlItem = result.INVENTORY.ITEM;
                       const part = {
                         id: xmlItem.ITEMID,
                         colorId: xmlItem.COLOR,
@@ -46,10 +65,11 @@ export const useFileUploadService = () => {
                         imageUrl: `https://img.bricklink.com/ItemImage/PN/${xmlItem.COLOR}/${xmlItem.ITEMID}.png`,
                         set: file.name.replace('.xml', '')
                       } as Part;
+                      partsChunk.push(part);
                       lots++;
                       parts = parts + (part.quantityNeeded - part.quantityHave);
-                      return part;
-                    }));
+                    }
+                  }
                   resolve(partsChunk);
                 }
               });

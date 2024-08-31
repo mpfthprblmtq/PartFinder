@@ -38,10 +38,9 @@ const PartRow: FC<PartRowParams> = ({part}) => {
         <Box sx={{position: 'relative', m: 1, minWidth: '80px', maxHeight: '50px', textAlign: 'center'}}>
           {loading ? <CircularProgress size={50} /> : <img src={part.imageUrl} height={50} alt={'part-img'} onClick={openMoreInformationDialog} style={{maxWidth: '100px'}}/>}
         </Box>
-        <Box sx={{position: 'relative', m: 1, textAlign: 'center'}}>
-          <Typography><a href={`https://www.bricklink.com/v2/catalog/catalogitem.page?P=${part.id}&idColor=${part.colorId}`}
-                         target={'_blank'} rel="noreferrer">{part.id}</a></Typography>
-          <Typography sx={{fontSize: '14px'}}>{colorMap.get(part.colorId)}</Typography>
+        <Box sx={{position: 'relative', m: 1, textAlign: 'center'}} onClick={() => setMoreInformationDialogOpen(true)}>
+          <Typography sx={{fontSize: '14px'}}>{part.name}</Typography>
+          <Typography sx={{fontSize: '10px'}}>{colorMap.get(part.colorId)}</Typography>
         </Box>
         <Box sx={{position: 'relative', m: 1}}>
           <Box sx={{display: 'flex', alignItems: 'center'}}>
@@ -77,6 +76,15 @@ const PartRow: FC<PartRowParams> = ({part}) => {
           <table>
             <tbody>
             <tr>
+              <td><strong>BrickLink:</strong></td>
+              <td>
+                <Typography>
+                  <a href={`https://www.bricklink.com/v2/catalog/catalogitem.page?P=${part.id}&idColor=${part.colorId}`}
+                     target={'_blank'} rel="noreferrer">{part.id}</a>
+                </Typography>
+              </td>
+            </tr>
+            <tr>
               <td><strong>Name:</strong></td>
               <td>{part.name}</td>
             </tr>
@@ -90,6 +98,31 @@ const PartRow: FC<PartRowParams> = ({part}) => {
             </tr>
             </tbody>
           </table>
+          <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '10px'}}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => {
+                dispatch(updatePartCount({...part, quantityHave: part.quantityHave + 1} as Part));
+                if (part.quantityHave === part.quantityNeeded - 1) {
+                  setMoreInformationDialogOpen(false);
+                }
+              }}
+              style={{width: "40px", minWidth: "40px", maxWidth: "40px", height: "40px", margin: "4px"}}
+            >
+              <Remove />
+            </Button>
+            <Typography sx={{fontSize: '20px', margin: '10px'}}>{subtract(part.quantityNeeded, part.quantityHave)}</Typography>
+            <Button
+              disabled={subtract(part.quantityNeeded, part.quantityHave) === subtract(part.originalQuantityNeeded, part.originalQuantityHave)}
+              variant="contained"
+              color="success"
+              onClick={() => dispatch(updatePartCount({...part, quantityHave: part.quantityHave - 1} as Part))}
+              style={{width: "40px", minWidth: "40px", maxWidth: "40px", height: "40px", margin: "4px"}}
+            >
+              <Add />
+            </Button>
+          </Box>
         </Box>
         } />
     </div>
